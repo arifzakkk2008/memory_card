@@ -74,3 +74,84 @@ ButtonGroup.addButton(r_btn_1)
 ButtonGroup.addButton(r_btn_2)
 ButtonGroup.addButton(r_btn_3)
 ButtonGroup.addButton(r_btn_4)
+
+h_line_1 = QHBoxLayout()
+h_line_2 = QHBoxLayout()
+h_line_3 = QHBoxLayout()
+main_v_line = QVBoxLayout()
+
+
+h_line_1.addWidget(question, alignment= Qt.AlignHCenter | Qt.AlignVCenter)
+h_line_2.addWidget(RadioGroupBox)
+h_line_2.addWidget(AnsGroupBox)
+AnsGroupBox.hide()
+h_line_3.addWidget(btn)
+
+
+main_v_line.addLayout(h_line_1)
+main_v_line.addLayout(h_line_2)
+main_v_line.addLayout(h_line_3)
+
+
+
+window.setLayout(main_v_line)
+
+def show_answer():
+    RadioGroupBox.hide()
+    AnsGroupBox.show()
+    btn.setText('Следующий вопрос')
+
+def show_question():
+    ButtonGroup.setExclusive(False)
+    r_btn_1.setChecked(False)
+    r_btn_2.setChecked(False)
+    r_btn_3.setChecked(False)
+    r_btn_4.setChecked(False)
+    ButtonGroup.setExclusive(True)
+    AnsGroupBox.hide()
+    RadioGroupBox.show()
+    btn.setText('Ответить')
+
+def next_question():
+    window.cur_question += 1
+    if window.cur_question == len(question_list):
+        window.cur_question = 0
+    q = question_list[window.cur_question] 
+    ask(q)   
+
+def test():
+    if btn.text() == 'Ответить':
+        check_answer()
+    else:
+       next_question()
+
+
+
+answers = [r_btn_1, r_btn_2, r_btn_3, r_btn_4]
+def ask(q):
+    shuffle(answers)
+    answers[0].setText(q.right_answer)
+    answers[1].setText(q.wrong1)
+    answers[2].setText(q.wrong2)
+    answers[3].setText(q.wrong3)
+    question.setText(q.quest)
+    correct.setText(q.right_answer)
+    show_question()
+
+    
+def show_correct(res):
+    result.setText(res)
+    show_answer()
+
+
+def check_answer():
+    if answers[0].isChecked():
+        show_correct('Правильно!')
+    else:
+        show_correct('Не правильно!')
+
+btn.clicked.connect(test)
+window.cur_question = -1
+next_question()
+window.show()
+app.exec_() 
